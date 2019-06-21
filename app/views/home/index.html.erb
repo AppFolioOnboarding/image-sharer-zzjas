@@ -1,2 +1,11 @@
 <h1>Hello world!</h1>
 <%= link_to 'Image Submission', new_image_path %>
+
+<ul>
+    <% @images.each do |img| %>
+        <li>
+        <%= image_tag(img.url, size:'400x400') %>
+        <p>Created at: <%= img.created_at %></p>
+        </li>
+    <% end %>
+</ul>
