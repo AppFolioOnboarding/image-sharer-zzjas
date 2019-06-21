@@ -26,4 +26,21 @@ class ImageTest < ActiveSupport::TestCase
     assert_not_predicate image, :valid?
     assert(image.errors.details[:url].any? { |e| e[:error] == 'Invalid file format' })
   end
+
+  test 'validation for parsed tag' do
+    image = Image.new(url: @test_url + '.png')
+    image.tag_list.add('a', 'b', 'c')
+    image.save
+
+    assert_predicate image, :valid?
+  end
+
+  test 'validation for not parsed tag' do
+    image = Image.new(url: @test_url + '.png')
+    image.tag_list.add('a, b, c')
+    image.save
+
+    assert_not_predicate image, :valid?
+    assert(image.errors.details[:tag].any? { |e| e[:error] == 'Cannot parse the tag' })
+  end
 end
