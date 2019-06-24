@@ -6,6 +6,14 @@
         <li>
         <%= image_tag(img.url, size:'400x400') %>
         <p>Created at: <%= img.created_at %></p>
+        <%=
+            link_to 'Delete',
+            params[:tag].present? ?
+            image_path(img, tag: params[:tag]) :
+            image_path(img),
+            "data-confirm": 'Are you sure to delete this image?',
+            "data-method": 'delete'
+        %>
         <% if img.tag_list.present? %>
             <p>Tags:</p>
             <ul class="tag_list">

@@ -25,6 +25,26 @@ def test_destroy
 
     assert_equal 'You have successfully deleted the image.', flash[:notice]
   end
+
+  test 'should show delete link for each image in index page' do
+    Image.create!(url: 'https://via.placeholder.com/15x15.png', tag_list: 'a')
+    Image.create!(url: 'https://via.placeholder.com/15x15.png', tag_list: 'a')
+    Image.create!(url: 'https://via.placeholder.com/15x15.png', tag_list: 'a')
+
+    get root_url
+
+    Image.all.each do |image|
+      assert_select "a[href='/images/#{image.id}']"
+    end
+  end
+
+  test 'should how delete link in show page' do
+    image = Image.create!(url: 'https://via.placeholder.com/15x15.png', tag_list: 'a')
+
+    get image_path(image)
+
+    assert_select "a[href='/images/#{image.id}']"
+  end
 end
 
 def test_index_page
