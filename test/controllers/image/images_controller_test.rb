@@ -65,7 +65,43 @@ def test_index_page
     get root_url
 
     image.tag_list.each do |tag|
-      assert_select 'ul.tag_list > li p', tag
+      assert_select 'ul.tag_list > li a', tag
+    end
+  end
+
+  test 'should only show images with tag a' do
+    image_tagged_with_a = Image.create!(url: 'https://via.placeholder.com/10x10.png', tag_list: 'a, b, c')
+    image_not_tagged_with_a = Image.create!(url: 'https://via.placeholder.com/20x20.png', tag_list: 'b, c, d')
+
+    image_tagged_with_only_a = Image.create!(url: 'https://via.placeholder.com/30x30.png', tag_list: 'a')
+    image_tagged_with_aaa = Image.create!(url: 'https://via.placeholder.com/40x40.png', tag_list: 'aaa')
+
+    get root_url, params: { tag: 'a' }
+
+    assert_response :success
+    assert_select_img image_tagged_with_a
+    assert_select_img image_not_tagged_with_a, count: 0
+
+    assert_select_img image_tagged_with_only_a
+    assert_select_img image_tagged_with_aaa, count: 0
+  end
+
+  test 'should show found no image when no image with a tag exists' do
+    image_tagged_with_only_a = Image.create!(url: 'https://via.placeholder.com/30x30.png', tag_list: 'a')
+
+    get root_url, params: { tag: 'b' }
+
+    assert_select_img image_tagged_with_only_a, count: 0
+    assert_equal 'No image with tag b found.', flash[:notice]
+  end
+
+  test 'tag link should point to filtered index page' do
+    Image.create!(url: 'https://via.placeholder.com/10x10.png', tag_list: 'a, b, c')
+
+    get root_url
+
+    Image.last.tag_list.each do |tag|
+      assert_select format('ul.tag_list li a[href="%<link>s"]', link: root_url(tag: tag))
     end
   end
 end
@@ -141,7 +177,11 @@ def test_show_page
     assert_response :ok
     assert_select 'ul li', 3
     image.tag_list.each do |tag|
-      assert_select 'ul li p', tag
+      assert_select 'ul li a', tag
+    end
+
+    image.tag_list.each do |tag|
+      assert_select format('ul li a[href="%<link>s"]', link: root_url(tag: tag))
     end
   end
 end
@@ -161,5 +201,9 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     end
 
     assert_select 'input[type=submit]', value: 'Create'
+  end
+
+  def assert_select_img(image, count: 1)
+    assert_select "img[src='#{image.url}']", count: count
   end
 end

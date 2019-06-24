@@ -1,6 +1,8 @@
 class ImagesController < ApplicationController
   def index
-    @images = Image.order(created_at: :desc)
+    @images = images_with_tag.order(created_at: :desc)
+
+    flash[:notice] = "No image with tag #{params[:tag]} found." if params[:tag].present? && @images.blank?
   end
 
   def new
@@ -31,5 +33,9 @@ class ImagesController < ApplicationController
 
   def image_params
     params.require(:image).permit(:url, :tag_list)
+  end
+
+  def images_with_tag
+    params[:tag].present? ? Image.tagged_with(params[:tag]) : Image.all
   end
 end
