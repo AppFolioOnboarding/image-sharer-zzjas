@@ -117,6 +117,19 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_equal 'Failed to create image.', flash[:notice]
   end
 
+  test 'should show tags' do
+    image = Image.create!(url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+                          tag_list: 'a, b, c')
+
+    get image_path(image)
+
+    assert_response :ok
+    assert_select 'ul li', 3
+    image.tag_list.each do |tag|
+      assert_select 'ul li p', tag
+    end
+  end
+
   private
 
   def form_exists(value_hash)
