@@ -1,6 +1,8 @@
 require 'test_helper'
 
 class ImagesControllerTest < ActionDispatch::IntegrationTest
+  # Tests for index page
+
   test 'should get index' do
     get root_url
     assert_response :success
@@ -27,9 +29,9 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     images = Image.order(created_at: :desc)
     idx = 0
 
-    assert_select 'ul', 1
-    assert_select 'ul li', 4
-    assert_select 'ul li' do |items|
+    assert_select 'ul.image_list', 1
+    assert_select 'ul.image_list > li', 4
+    assert_select 'ul.image_list > li' do |items|
       items.each do |item|
         assert_select item, format('img[src="%<image_url>s"]', image_url: images[idx].url)
         assert_select item, 'p', 'Created at: ' + images[idx].created_at.to_s
@@ -41,7 +43,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
   test 'should not show images' do
     get root_url
 
-    assert_select 'ul', 1
+    assert_select 'ul.image_list', 1
     assert_select 'li', 0
   end
 
@@ -51,12 +53,24 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
 
     get root_url
 
-    assert_select 'ul li' do |items|
+    assert_select 'ul.image_list > li' do |items|
       items.each do |item|
         assert_select item, 'img[width="400"]'
       end
     end
   end
+
+  test 'should show images with tags' do
+    image = Image.create!(url: 'https://via.placeholder.com/15x15.png', tag_list: 'a, b, c')
+
+    get root_url
+
+    image.tag_list.each do |tag|
+      assert_select 'ul.tag_list > li p', tag
+    end
+  end
+
+  # Tests for new page
 
   test 'should get new' do
     get new_image_path
@@ -100,6 +114,8 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_equal Image.last.tag_list[1], 'b'
     assert_equal Image.last.tag_list[2], 'c'
   end
+
+  # Tests for show page
 
   test 'should show image' do
     image = Image.create!(url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png', tag_list: 'a')
