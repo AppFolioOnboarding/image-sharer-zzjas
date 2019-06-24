@@ -51,6 +51,7 @@ def test_index_page
 
     get root_url
 
+    assert_select 'ul.image_list > li', 2
     assert_select 'ul.image_list > li' do |items|
       items.each do |item|
         assert_select item, 'img[width="400"]'
