@@ -65,7 +65,7 @@ def test_index_page
     get root_url
 
     image.tag_list.each do |tag|
-      assert_select 'ul.tag_list > li p', tag
+      assert_select 'ul.tag_list > li a', tag
     end
   end
 
@@ -93,6 +93,16 @@ def test_index_page
 
     assert_select_img image_tagged_with_only_a, count: 0
     assert_equal 'No image with tag b found.', flash[:notice]
+  end
+
+  test 'tag link should point to filtered index page' do
+    Image.create!(url: 'https://via.placeholder.com/10x10.png', tag_list: 'a, b, c')
+
+    get root_url
+
+    Image.last.tag_list.each do |tag|
+      assert_select format('ul.tag_list li a[href="%<link>s"]', link: root_url(tag: tag))
+    end
   end
 end
 
@@ -167,7 +177,11 @@ def test_show_page
     assert_response :ok
     assert_select 'ul li', 3
     image.tag_list.each do |tag|
-      assert_select 'ul li p', tag
+      assert_select 'ul li a', tag
+    end
+
+    image.tag_list.each do |tag|
+      assert_select format('ul li a[href="%<link>s"]', link: root_url(tag: tag))
     end
   end
 end

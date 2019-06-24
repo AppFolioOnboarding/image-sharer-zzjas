@@ -10,7 +10,9 @@
             <p>Tags:</p>
             <ul class="tag_list">
                 <% img.tag_list.each do |tag| %>
-                    <li><p><%= tag %></p></li>
+                    <li>
+                        <%= link_to tag, root_url(tag: tag) %>
+                    </li>
                 <% end %>
             </ul>
         <% end %>
