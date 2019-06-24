@@ -9,10 +9,18 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should show list of images' do
-    Image.create!(created_at: Time.zone.now - 5.minutes, url: 'https://homepages.cae.wisc.edu/~ece533/images/arctichare.png')
-    Image.create!(created_at: Time.zone.now - 20.minutes, url: 'https://homepages.cae.wisc.edu/~ece533/images/fruits.png')
-    Image.create!(created_at: Time.zone.now - 15.minutes, url: 'https://homepages.cae.wisc.edu/~ece533/images/boat.png')
-    Image.create!(created_at: Time.zone.now - 10.minutes, url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png')
+    Image.create!(created_at: Time.zone.now - 5.minutes,
+                  url: 'https://homepages.cae.wisc.edu/~ece533/images/arctichare.png',
+                  tag_list: 'a')
+    Image.create!(created_at: Time.zone.now - 20.minutes,
+                  url: 'https://homepages.cae.wisc.edu/~ece533/images/fruits.png',
+                  tag_list: 'a')
+    Image.create!(created_at: Time.zone.now - 15.minutes,
+                  url: 'https://homepages.cae.wisc.edu/~ece533/images/boat.png',
+                  tag_list: 'a')
+    Image.create!(created_at: Time.zone.now - 10.minutes,
+                  url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+                  tag_list: 'a')
 
     get root_url
 
@@ -38,8 +46,8 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'should show images with width 400' do
-    Image.create!(url: 'https://via.placeholder.com/1500x1500.png')
-    Image.create!(url: 'https://via.placeholder.com/15x15.png')
+    Image.create!(url: 'https://via.placeholder.com/1500x1500.png', tag_list: 'a')
+    Image.create!(url: 'https://via.placeholder.com/15x15.png', tag_list: 'a')
 
     get root_url
 
@@ -53,12 +61,14 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
   test 'should get new' do
     get new_image_path
     assert_response :success
-    form_exists ''
+    form_exists url: ''
+    form_exists tag_list: ''
   end
 
   test 'should create image' do
+    img = { image: { url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png', tag_list: 'a' } }
     assert_difference('Image.count') do
-      post images_path, params: { image: { url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png' } }
+      post images_path, params: img
     end
 
     assert_redirected_to image_path(Image.last)
@@ -66,19 +76,33 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
   end
 
   test 'shoud stay when fail to create new image' do
-    img = { image: { url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.pdf' } }
+    img = { image: { url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.pdf', tag_list: 'a, b, c' } }
     assert_no_difference('Image.count') do
       post images_path, params: img
     end
 
     assert_response :unprocessable_entity
     assert_select '.error', value: 'Invalid file format'
-    form_exists img[:image][:url]
+    form_exists url: img[:image][:url], tag_list: img[:image][:tag_list]
     assert_equal 'Failed to create image.', flash[:notice]
   end
 
+  test 'should store tags' do
+    post images_path, params: {
+      image: {
+        url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png',
+        tag_list: 'a, b, c'
+      }
+    }
+
+    assert_redirected_to image_path(Image.last)
+    assert_equal Image.last.tag_list[0], 'a'
+    assert_equal Image.last.tag_list[1], 'b'
+    assert_equal Image.last.tag_list[2], 'c'
+  end
+
   test 'should show image' do
-    image = Image.create!(url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png')
+    image = Image.create!(url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png', tag_list: 'a')
 
     get image_path(image)
 
@@ -95,9 +119,13 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
 
   private
 
-  def form_exists(should_have_value_of)
+  def form_exists(value_hash)
     assert_select 'form'
-    assert_select 'input', value: should_have_value_of
+
+    value_hash.each do |k, v|
+      assert_select format('input#image_%<field>s[value=?]', field: k.to_s), v
+    end
+
     assert_select 'input[type=submit]', value: 'Create'
   end
 end
