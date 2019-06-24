@@ -1,8 +1,6 @@
 require 'test_helper'
 
-class ImagesControllerTest < ActionDispatch::IntegrationTest
-  # Tests for index page
-
+def test_index_page
   test 'should get index' do
     get root_url
     assert_response :success
@@ -69,9 +67,9 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
       assert_select 'ul.tag_list > li p', tag
     end
   end
+end
 
-  # Tests for new page
-
+def test_new_page
   test 'should get new' do
     get new_image_path
     assert_response :success
@@ -114,9 +112,9 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
     assert_equal Image.last.tag_list[1], 'b'
     assert_equal Image.last.tag_list[2], 'c'
   end
+end
 
-  # Tests for show page
-
+def test_show_page
   test 'should show image' do
     image = Image.create!(url: 'https://homepages.cae.wisc.edu/~ece533/images/airplane.png', tag_list: 'a')
 
@@ -145,6 +143,12 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
       assert_select 'ul li p', tag
     end
   end
+end
+
+class ImagesControllerTest < ActionDispatch::IntegrationTest
+  test_index_page
+  test_new_page
+  test_show_page
 
   private
 
