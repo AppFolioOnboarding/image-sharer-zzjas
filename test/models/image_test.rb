@@ -12,19 +12,19 @@ class ImageTest < ActiveSupport::TestCase
   test 'validation for empty' do
     image = Image.new(url: '')
     assert_not_predicate image, :valid?
-    assert(image.errors.details[:url].any? { |e| e[:error] == :blank })
+    assert image.errors.added?(:url, :blank)
   end
 
   test 'validation for invalid url' do
     image = Image.new(url: 'abc.png')
     assert_not_predicate image, :valid?
-    assert(image.errors.details[:url].any? { |e| e[:error] == :url })
+    assert image.errors.added?(:url, :url)
   end
 
   test 'validation for invalid format' do
     image = Image.new(url: @test_url + '.pdf')
     assert_not_predicate image, :valid?
-    assert(image.errors.details[:url].any? { |e| e[:error] == 'Invalid file format' })
+    assert image.errors.added?(:url, 'Invalid file format')
   end
 
   test 'validation for parsed tag' do
@@ -41,6 +41,6 @@ class ImageTest < ActiveSupport::TestCase
     image.save
 
     assert_not_predicate image, :valid?
-    assert(image.errors.details[:tag].any? { |e| e[:error] == 'Cannot parse the tag' })
+    assert image.errors.added?(:tag, 'Cannot parse the tag')
   end
 end
