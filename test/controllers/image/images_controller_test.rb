@@ -1,5 +1,32 @@
 require 'test_helper'
 
+def test_destroy
+  test 'should delete an image' do
+    image = Image.create!(url: 'https://via.placeholder.com/15x15.png', tag_list: 'a')
+
+    assert_difference('Image.count', -1) do
+      delete image_path(image)
+    end
+
+    assert_equal 'You have successfully deleted the image.', flash[:notice]
+  end
+
+  test 'should preserve tag after delete' do
+    image = Image.create!(url: 'https://via.placeholder.com/15x15.png', tag_list: 'a')
+    delete image_path(image), params: { tag: 'a' }
+
+    assert_redirected_to root_url(tag: 'a')
+  end
+
+  test 'should have no error when delete non-existing image' do
+    assert_no_difference('Image.count') do
+      delete image_path(-1)
+    end
+
+    assert_equal 'You have successfully deleted the image.', flash[:notice]
+  end
+end
+
 def test_index_page
   test 'should get index' do
     get root_url
@@ -190,6 +217,7 @@ class ImagesControllerTest < ActionDispatch::IntegrationTest
   test_index_page
   test_new_page
   test_show_page
+  test_destroy
 
   private
 
