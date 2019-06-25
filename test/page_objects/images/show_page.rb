@@ -12,16 +12,6 @@ module PageObjects
 
       delegate :tags, to: :image_card
 
-      def delete
-        # TODO
-        yield node.driver.browser.switch_to.alert
-      end
-
-      def delete_and_confirm!
-        # TODO
-        window.change_to(IndexPage)
-      end
-
       def go_back_to_index!
         IndexPage.visit
       end

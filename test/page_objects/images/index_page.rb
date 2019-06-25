@@ -4,11 +4,7 @@ module PageObjects
     class IndexPage < PageObjects::Document
       path :root
 
-      collection :images, locator: '.image_list', item_locator: '.image-card', contains: ImageCard do
-        def view!
-          # TODO
-        end
-      end
+      collection :images, locator: '.image_list', item_locator: '.image-card', contains: ImageCard
 
       def add_new_image!
         node.click_on('New Image')
@@ -23,6 +19,21 @@ module PageObjects
 
       def clear_tag_filter!
         # TODO
+      end
+
+      def delete(url)
+        to_delete = images.find { |img| img.url == url }
+        to_delete&.delete_button&.node&.click
+        yield node.driver.browser.switch_to.alert
+      end
+
+      def delete_and_confirm!(url)
+        delete(url, &:accept)
+        window.change_to(IndexPage)
+      end
+
+      def flash_message(_type)
+        node.find('.alert-notice').text
       end
     end
   end
