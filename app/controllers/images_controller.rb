@@ -29,6 +29,14 @@ class ImagesController < ApplicationController
     redirect_to new_image_path
   end
 
+  def destroy
+    image = Image.find_by(id: params[:id])
+    image&.destroy
+
+    flash[:notice] = 'You have successfully deleted the image.'
+    redirect_to params[:tag].present? ? root_url(tag: params[:tag]) : root_url
+  end
+
   private
 
   def image_params

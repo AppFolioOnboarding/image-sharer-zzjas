@@ -1,21 +1,10 @@
 <h1>Hello world!</h1>
-<%= link_to 'Image Submission', new_image_path %>
+<%= link_to 'New Image', new_image_path %>
 
 <ul class="image_list">
     <% @images.each do |img| %>
         <li>
-        <%= image_tag(img.url, size:'400x400') %>
-        <p>Created at: <%= img.created_at %></p>
-        <% if img.tag_list.present? %>
-            <p>Tags:</p>
-            <ul class="tag_list">
-                <% img.tag_list.each do |tag| %>
-                    <li>
-                        <%= link_to tag, root_url(tag: tag) %>
-                    </li>
-                <% end %>
-            </ul>
-        <% end %>
+            <%= render partial: 'image_card', locals: { img: img } %>
         </li>
     <% end %>
 </ul>

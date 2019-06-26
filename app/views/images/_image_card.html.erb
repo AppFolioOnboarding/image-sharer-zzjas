@@ -1,0 +1,23 @@
+<div class="image-card">
+ <%= image_tag(img.url, size:'400x400') %>
+    <p>Created at: <%= img.created_at %></p>
+    <%=
+        link_to 'Delete',
+        params[:tag].present? ?
+        image_path(img, tag: params[:tag]) :
+        image_path(img),
+        "data-confirm": 'Are you sure to delete this image?',
+        "data-method": 'delete',
+        class: 'delete-button'
+    %>
+    <% if img.tag_list.present? %>
+        <p>Tags:</p>
+        <ul class="tag_list">
+            <% img.tag_list.each do |tag| %>
+                <li>
+                    <%= link_to tag, root_url(tag: tag) %>
+                </li>
+            <% end %>
+        </ul>
+    <% end %>
+</div>
