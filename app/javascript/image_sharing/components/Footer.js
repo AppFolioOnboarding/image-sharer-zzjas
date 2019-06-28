@@ -8,7 +8,9 @@ class Footer extends Component {
       <footer>
         <Row>
           <Col xs={{ size: 4, offset: 4 }}>
-            <p className='text-center' fontSize="10px">Copyright: AppFolio Inc. Onboarding</p>
+            <p className='text-center' style={{ fontSize: '10px' }}>
+              Copyright: AppFolio Inc. Onboarding
+            </p>
           </Col>
         </Row>
       </footer>

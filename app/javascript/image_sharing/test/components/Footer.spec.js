@@ -16,7 +16,7 @@ describe('<Footer/>', () => {
   });
 
   it('should show text with fontSize 10px', () => {
-    expect(wrapper.find('p').props().fontSize).to.equal('10px');
+    expect(wrapper.find('p').props().style).to.deep.equal({ fontSize: '10px' });
   });
 
   it('should be at the center of the page', () => {
