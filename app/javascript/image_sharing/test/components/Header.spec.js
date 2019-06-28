@@ -17,8 +17,7 @@ describe('<Header/>', () => {
   });
 
   it('should be at the center of the page', () => {
-    expect(wrapper.find('Row')).to.have.lengthOf(1);
-    expect(wrapper.find('Col').props().xs).to.deep.equal({ size: 4, offset: 4 });
+    expect(wrapper.find('MidFourCols')).to.have.lengthOf(1);
     expect(wrapper.find('h3').props().className).to.equal('text-center');
   });
 });

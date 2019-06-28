@@ -46,6 +46,10 @@ describe('<FeedbackForm />', () => {
   });
 
 
+  it('should show everything at the center of the page', () => {
+    expect(wrapper.find('MidFourCols')).to.have.lengthOf(3);
+  });
+
   describe('Name field', () => {
     it('should show the label and text input', () => {
       expect(wrapper.find('#nameLabel').find('p').text()).to.equal('Your Name:');
