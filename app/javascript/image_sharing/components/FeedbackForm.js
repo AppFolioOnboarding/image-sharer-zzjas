@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import { observer, inject } from 'mobx-react';
 import MidFourCols from './MidFourCols';
 
-@observer
 @inject('stores')
+@observer
 class FeedbackForm extends Component {
   render() {
     const feedback = this.props.stores.feedbackStore;
