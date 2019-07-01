@@ -16,12 +16,11 @@ describe('<Footer/>', () => {
   });
 
   it('should show text with fontSize 10px', () => {
-    expect(wrapper.find('p').props().fontSize).to.equal('10px');
+    expect(wrapper.find('p').props().style).to.deep.equal({ fontSize: '10px' });
   });
 
   it('should be at the center of the page', () => {
-    expect(wrapper.find('Row')).to.have.lengthOf(1);
-    expect(wrapper.find('Col').props().xs).to.deep.equal({ size: 4, offset: 4 });
+    expect(wrapper.find('MidFourCols')).to.have.lengthOf(1);
     expect(wrapper.find('p').props().className).to.equal('text-center');
   });
 });

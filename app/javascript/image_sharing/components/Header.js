@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { Row, Col } from 'reactstrap';
 import PropTypes from 'prop-types';
+import MidFourCols from './MidFourCols';
 
 class Header extends Component {
   static propTypes = {
@@ -10,15 +10,13 @@ class Header extends Component {
   render() {
     const title = this.props.title;
     return (
-      <header>
-        <Row>
-          <Col xs={{ size: 4, offset: 4 }}>
-            <h3 className='text-center'>
-              {title}
-            </h3>
-          </Col>
-        </Row>
-      </header>
+      <MidFourCols>
+        <header>
+          <h3 className='text-center'>
+            {title}
+          </h3>
+        </header>
+      </MidFourCols>
     );
   }
 }
