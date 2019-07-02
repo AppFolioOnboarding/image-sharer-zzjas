@@ -6,6 +6,7 @@ import { describe, it } from 'mocha';
 import sinon from 'sinon';
 import { Provider } from 'mobx-react';
 import FeedbackForm from '../../components/FeedbackForm';
+import PostFeedbackService from '../../services/PostFeedbackService';
 
 describe('<FeedbackForm />', () => {
   const testValue = 'Test string and this should bee uN1quE.';
@@ -91,6 +92,28 @@ describe('<FeedbackForm />', () => {
   describe('Submit button', () => {
     it('should show the submit button', () => {
       expect(wrapper.find('button').text()).to.equal('Submit');
+    });
+
+    it('should show success alert when have name', () => {
+      const alertStub = sinon.stub(window, 'alert');
+      const testName = 'Test NaME';
+
+      sinon.stub(PostFeedbackService.prototype, 'submitFeedback')
+        .returns(Promise.resolve({ userName: testName }));
+
+      wrapper.find('button').props().onClick().then(() => {
+        sinon.assert.calledWith(alertStub, `Thanks, ${testName}! Your feedback is received.`);
+      });
+    });
+
+    it('should show failure alert on submission error', () => {
+      const alertStub = sinon.stub(window, 'alert');
+
+      sinon.stub(PostFeedbackService.prototype, 'submitFeedback').returns(Promise.reject());
+
+      wrapper.find('button').props().onClick().then(() => {
+        sinon.assert.calledWith(alertStub, 'Something went wrong...');
+      });
     });
   });
 });
