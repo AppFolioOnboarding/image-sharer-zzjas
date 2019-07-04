@@ -1,7 +1,8 @@
-// import { post } from '../utils/helper';
+import { post } from '../utils/helper';
 
-export class PostFeedbackService {
-  /* Implement your service */
+export default class PostFeedbackService {
+  submitFeedback(form, wdn = window) {
+    const path = `${wdn.location.origin}/api/feedbacks`;
+    return post(path, form);
+  }
 }
-
-export default PostFeedbackService;
